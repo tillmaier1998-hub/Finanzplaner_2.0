@@ -13,70 +13,24 @@
 <title>Familienkonto</title>
 </head>
 <body>
-<header>
-  <div class="brand"><div class="logo">€</div><div><strong>Familienkonto</strong><small>Euer Geld. Im Blick.</small></div></div>
-  <span class="demo">PROTOTYP</span>
-</header>
+<header><div class="brand"><div class="logo">€</div><div><strong>Familienkonto</strong><small>Euer Geld. Im Blick.</small></div></div><span class="demo">PROTOTYP 0.2</span></header>
 <main>
-  <nav class="tabs">
-    <button class="tab active" data-tab="home">Übersicht</button>
-    <button class="tab" data-tab="costs">Fixkosten</button>
-    <button class="tab" data-tab="accounts">Konten</button>
-  </nav>
-  <section id="home" class="page active">
-    <div class="hero">
-      <div class="eyebrow">FREI VERFÜGBAR – NACH OFFENEN FIXKOSTEN</div>
-      <div id="available" class="big">–</div>
-      <div class="muted-light">Kontostand − noch offene Fixkosten − Sicherheitsreserve</div>
-    </div>
-    <div class="metrics">
-      <article><span>Gesamtkontostand</span><strong id="totalBalance">–</strong></article>
-      <article><span>Offene Fixkosten</span><strong id="remainingCosts">–</strong></article>
-    </div>
-    <article class="panel">
-      <div class="panel-head"><h2>Nächste Abbuchungen</h2><button class="text-button" data-go="costs">Alle anzeigen</button></div>
-      <div id="upcoming"></div>
-    </article>
-    <article class="panel reserve">
-      <label for="reserve">Sicherheitsreserve</label>
-      <div class="inline"><input id="reserve" type="number" min="0" step="10"><span>€</span></div>
-      <p>Dieser Betrag bleibt unangetastet und wird vom verfügbaren Geld abgezogen.</p>
-    </article>
-    <p class="notice">Hinweis: Noch keine Bankverbindung. Trage Kontostände und Fixkosten selbst ein. Markiere Abbuchungen nach Zahlung als „bezahlt“.</p>
-  </section>
-  <section id="costs" class="page">
-    <div class="section-title"><div><h1>Fixkosten</h1><p>Regelmäßige monatliche Ausgaben</p></div><button class="primary" id="addCost">＋ Hinzufügen</button></div>
-    <div class="summary-line"><span>Monatliche Fixkosten gesamt</span><strong id="monthlyCosts">–</strong></div>
-    <div id="costList" class="list"></div>
-  </section>
-  <section id="accounts" class="page">
-    <div class="section-title"><div><h1>Konten</h1><p>Gemeinsamer Überblick</p></div></div>
-    <div id="accountList" class="list"></div>
-    <article class="panel">
-      <h2>Bankverbindung</h2>
-      <p class="muted">Gewünschte Bank: Sparkasse Rhein-Haardt</p>
-      <p class="notice">Die Konten sind hier noch manuelle Platzhalter. Die echte PSD2-/Open-Banking-Verbindung wird separat entwickelt und benötigt einen geeigneten Anbieter sowie die Zustimmung beider Kontoinhaber.</p>
-    </article>
-  </section>
+<nav class="tabs"><button class="tab active" data-tab="home">Übersicht</button><button class="tab" data-tab="costs">Fixkosten</button><button class="tab" data-tab="incomes">Einnahmen</button><button class="tab" data-tab="accounts">Konten</button></nav>
+<section id="home" class="page active">
+ <div class="hero"><div class="eyebrow">JETZT FREI VERFÜGBAR</div><div id="available" class="big">–</div><div class="muted-light">Aktuelle Kontostände − offene Fixkosten − Sicherheitsreserve</div></div>
+ <div class="metrics"><article><span>Gesamtkontostand</span><strong id="totalBalance">–</strong></article><article><span>Offene Fixkosten</span><strong id="remainingCosts">–</strong></article></div>
+ <article class="panel forecast-panel"><div class="eyebrow dark">PROGNOSE NACH ERWARTETEN EINNAHMEN UND OFFENEN FIXKOSTEN</div><div id="forecast" class="forecast-number">–</div><p class="muted">Voraussichtlicher Betrag bis Monatsende nach den eingetragenen Buchungen und abzüglich eurer Reserve.</p><div class="metrics compact"><article><span>Monatliche Einnahmen</span><strong id="monthlyIncomeHome">–</strong></article><article><span>Noch erwartete Einnahmen</span><strong id="expectedIncome">–</strong></article></div></article>
+ <article class="panel"><div class="panel-head"><h2>Nächste Abbuchungen</h2><button class="text-button" data-go="costs">Alle anzeigen</button></div><div id="upcoming"></div></article>
+ <article class="panel reserve"><label for="reserve">Sicherheitsreserve</label><div class="inline"><input id="reserve" type="number" min="0" step="10"><span>€</span></div><p>Dieser Betrag bleibt unangetastet und wird vom verfügbaren Geld abgezogen.</p></article>
+ <article class="panel"><h2>Konten-Prognose</h2><div id="accountForecast"></div><div id="forecastAlert"></div></article>
+ <p class="notice">Prototyp: Kontostände, Einnahmen und Fixkosten werden manuell gepflegt. Markiere Zahlungen bzw. Einnahmen nach Ausführung als bezahlt/erhalten. Die Prognose ist nur so genau wie deine Eingaben.</p>
+</section>
+<section id="costs" class="page"><div class="section-title"><div><h1>Fixkosten</h1><p>Regelmäßige monatliche Ausgaben</p></div><button class="primary" id="addCost">＋ Hinzufügen</button></div><div class="summary-line"><span>Monatliche Fixkosten gesamt</span><strong id="monthlyCosts">–</strong></div><div id="costList" class="list"></div></section>
+<section id="incomes" class="page"><div class="section-title"><div><h1>Einnahmen</h1><p>Gehalt, Elterngeld, Kindergeld und mehr</p></div><button class="primary" id="addIncome">＋ Hinzufügen</button></div><div class="summary-line"><span>Monatliche Einnahmen gesamt</span><strong id="monthlyIncomeTotal">–</strong></div><div id="incomeList" class="list"></div><p class="notice">„Erhalten“ markieren, sobald das Geld auf dem jeweiligen Konto eingegangen ist. Der Kontostand muss anschließend manuell aktualisiert werden.</p></section>
+<section id="accounts" class="page"><div class="section-title"><div><h1>Konten</h1><p>Gemeinsamer Überblick</p></div></div><div id="accountList" class="list"></div><article class="panel"><h2>Bankverbindung</h2><p class="muted">Gewünschte Bank: Sparkasse Rhein-Haardt</p><p class="notice">Die Konten sind hier noch manuelle Platzhalter. Eine echte PSD2-/Open-Banking-Verbindung benötigt einen geeigneten Anbieter, eine sichere Serverkomponente und die Zustimmung beider Kontoinhaber.</p></article></section>
 </main>
-<dialog id="costDialog">
-  <form method="dialog" id="costForm">
-    <div class="dialog-head"><h2>Fixkosten hinzufügen</h2><button class="close" value="cancel" aria-label="Schließen">×</button></div>
-    <label>Name<input id="costName" required placeholder="z. B. Miete"></label>
-    <div class="two"><label>Betrag (€)<input id="costAmount" required type="number" min="0.01" step="0.01" placeholder="0,00"></label><label>Abbuchungstag<input id="costDay" required type="number" min="1" max="31" value="1"></label></div>
-    <label>Konto<select id="costOwner"><option value="you">Mein Girokonto</option><option value="partner">Girokonto meiner Frau</option></select></label>
-    <label>Kategorie<select id="costCategory"><option>Wohnen</option><option>Mobilität</option><option>Versicherung</option><option>Verträge</option><option>Abos</option><option>Sonstiges</option></select></label>
-    <button class="primary full" id="saveCost" value="default">Speichern</button>
-  </form>
-</dialog>
-<dialog id="accountDialog">
-  <form method="dialog" id="accountForm">
-    <div class="dialog-head"><h2>Kontostand ändern</h2><button class="close" value="cancel">×</button></div>
-    <p id="accountName" class="muted"></p>
-    <label>Aktueller Kontostand (€)<input id="accountBalance" type="number" step="0.01" required></label>
-    <button class="primary full" value="default">Speichern</button>
-  </form>
-</dialog>
+<dialog id="costDialog"><form method="dialog" id="costForm"><div class="dialog-head"><h2>Fixkosten hinzufügen</h2><button class="close" value="cancel" aria-label="Schließen">×</button></div><label>Name<input id="costName" required placeholder="z. B. Miete"></label><div class="two"><label>Betrag (€)<input id="costAmount" required type="number" min="0.01" step="0.01" placeholder="0,00"></label><label>Abbuchungstag<input id="costDay" required type="number" min="1" max="31" value="1"></label></div><label>Konto<select id="costOwner"><option value="you">Mein Girokonto</option><option value="partner">Girokonto meiner Frau</option></select></label><label>Kategorie<select id="costCategory"><option>Wohnen</option><option>Mobilität</option><option>Versicherung</option><option>Verträge</option><option>Abos</option><option>Sonstiges</option></select></label><button class="primary full" value="default">Speichern</button></form></dialog>
+<dialog id="incomeDialog"><form method="dialog" id="incomeForm"><div class="dialog-head"><h2>Einnahme hinzufügen</h2><button class="close" value="cancel" aria-label="Schließen">×</button></div><label>Name<input id="incomeName" required placeholder="z. B. Gehalt"></label><div class="two"><label>Betrag (€)<input id="incomeAmount" required type="number" min="0.01" step="0.01" placeholder="0,00"></label><label>Zahlungstag<input id="incomeDay" required type="number" min="1" max="31" value="1"></label></div><label>Konto<select id="incomeOwner"><option value="you">Mein Girokonto</option><option value="partner">Girokonto meiner Frau</option></select></label><button class="primary full" value="default">Speichern</button></form></dialog>
+<dialog id="accountDialog"><form method="dialog" id="accountForm"><div class="dialog-head"><h2>Kontostand ändern</h2><button class="close" value="cancel">×</button></div><p id="accountName" class="muted"></p><label>Aktueller Kontostand (€)<input id="accountBalance" type="number" step="0.01" required></label><button class="primary full" value="default">Speichern</button></form></dialog>
 <script src="app.js"></script>
-</body>
-</html>
+</body></html>
