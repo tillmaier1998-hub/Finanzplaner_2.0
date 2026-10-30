@@ -38,3 +38,9 @@
 .balance-line strong{font-size:14px}
 .positive{color:#0b9b62}
 @media(max-width:370px){.forecast-summary{gap:5px}.summary-tile{padding:10px 7px}.summary-tile strong{font-size:12px}.summary-tile em{font-size:8px}.account-forecast{padding:11px}.date-field{min-width:105px}}
+
+.baseline-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:12px 0;border-bottom:1px solid #e9efec}
+.baseline-fields label{display:grid;gap:5px;min-width:0}
+.baseline-fields label span{font-size:11px;color:#66736d;font-weight:650}
+.baseline-fields input{width:100%;min-width:0;border:1px solid #dce7e1;border-radius:11px;padding:10px 8px;font:inherit;font-size:14px;background:#fff;color:#17251e;box-sizing:border-box}
+@media(max-width:370px){.baseline-fields{grid-template-columns:1fr}}

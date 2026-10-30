@@ -39,25 +39,30 @@ function formatDate(iso){
  const [y,m,d]=iso.split("-").map(Number);return new Intl.DateTimeFormat("de-DE").format(new Date(y,m-1,d));
 }
 function forecastAccount(account){
- const today=new Date();today.setHours(0,0,0,0);
+ const today=todayISO();
+ state.balanceDates=state.balanceDates||{};
+ const referenceDate=state.balanceDates[account.id]||today;
  const saved=state.forecastDates?.[account.id];
- const date=saved&&saved>=todayISO()?saved:todayISO();
+ const date=saved&&saved>=referenceDate?saved:referenceDate;
+ const [ry,rm,rd]=referenceDate.split("-").map(Number);
  const [ty,tm,td]=date.split("-").map(Number);
- const end=new Date(ty,tm-1,td);let income=0,expense=0;
- const startMonth=new Date(today.getFullYear(),today.getMonth(),1);
- for(let month=new Date(startMonth);month<=new Date(ty,tm-1,1);month.setMonth(month.getMonth()+1)){
-  const isCurrent=month.getFullYear()===today.getFullYear()&&month.getMonth()===today.getMonth();
+ const baseline=new Date(ry,rm-1,rd);baseline.setHours(0,0,0,0);
+ const end=new Date(ty,tm-1,td);end.setHours(0,0,0,0);
+ let income=0,expense=0;
+ const firstMonth=new Date(ry,rm-1,1);
+ for(let month=new Date(firstMonth);month<=new Date(ty,tm-1,1);month.setMonth(month.getMonth()+1)){
+  const isReferenceMonth=month.getFullYear()===ry&&month.getMonth()===rm-1;
   const monthEnd=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
   for(const item of state.incomes.filter(x=>x.owner===account.id)){
    const day=Math.min(Number(item.day)||1,monthEnd),occurrence=new Date(month.getFullYear(),month.getMonth(),day);
-   if(occurrence<=end&&(!isCurrent||!item.received))income+=Number(item.amount||0);
+   if(occurrence>baseline&&occurrence<=end&&(!isReferenceMonth||!item.received))income+=Number(item.amount||0);
   }
   for(const item of state.costs.filter(x=>x.owner===account.id)){
    const day=Math.min(Number(item.day)||1,monthEnd),occurrence=new Date(month.getFullYear(),month.getMonth(),day);
-   if(occurrence<=end&&(!isCurrent||!item.paid))expense+=Number(item.amount||0);
+   if(occurrence>baseline&&occurrence<=end&&(!isReferenceMonth||!item.paid))expense+=Number(item.amount||0);
   }
  }
- return {account,date,income,expense,change:income-expense,balance:Number(account.balance||0)+income-expense};
+ return {account,date,referenceDate,income,expense,change:income-expense,balance:Number(account.balance||0)+income-expense};
 }
 function render(){
  document.querySelector("#available").textContent=euro(available());
@@ -83,7 +88,11 @@ function render(){
  document.querySelector("#forecastChange").textContent=(sumChange>=0?"+":"")+euro(sumChange);
  document.querySelector("#accountForecast").innerHTML=projections.map(p=>`
   <article class="account-forecast ${p.account.id==="partner"?"partner":""}">
-   <div class="account-forecast-head"><div class="account-mark">${p.account.id==="partner"?"◉":"▣"}</div><div class="account-title"><strong>${esc(p.account.name)}</strong><small>Prognose bis ${formatDate(p.date)}</small></div><label class="date-field"><span>Datum</span><input type="date" class="forecast-date" data-forecast-date="${p.account.id}" min="${todayISO()}" value="${p.date}"></label></div>
+   <div class="account-forecast-head"><div class="account-mark">${p.account.id==="partner"?"◉":"▣"}</div><div class="account-title"><strong>${esc(p.account.name)}</strong><small>Prognose bis ${formatDate(p.date)}</small></div><label class="date-field"><span>Datum</span><input type="date" class="forecast-date" data-forecast-date="${p.account.id}" min="${p.referenceDate}" value="${p.date}"></label></div>
+   <div class="baseline-fields">
+    <label><span>Aktueller Kontostand (€)</span><input type="number" step="0.01" inputmode="decimal" class="balance-input" data-balance="${p.account.id}" value="${Number(p.account.balance||0)}"></label>
+    <label><span>Kontostand vom</span><input type="date" class="balance-date" data-balance-date="${p.account.id}" value="${p.referenceDate}" max="${todayISO()}"></label>
+   </div>
    <div class="forecast-lines">
     <div><span class="line-icon income-icon">↑</span><span>Einnahmen</span><strong>${euro(p.income)}</strong></div>
     <div><span class="line-icon expense-icon">↓</span><span>Ausgaben</span><strong>${euro(p.expense)}</strong></div>
@@ -129,6 +138,19 @@ document.querySelector("#accountForm").addEventListener("submit",e=>{
  document.querySelector("#accountDialog").close();
 });
 document.addEventListener("change",e=>{
+ const balanceField=e.target.closest("[data-balance]");
+ if(balanceField){
+  const a=state.accounts.find(x=>x.id===balanceField.dataset.balance);
+  if(a){a.balance=Number(balanceField.value)||0;save()}
+ }
+ const balanceDateField=e.target.closest("[data-balance-date]");
+ if(balanceDateField){
+  state.balanceDates=state.balanceDates||{};
+  state.balanceDates[balanceDateField.dataset.balanceDate]=balanceDateField.value||todayISO();
+  const fd=state.forecastDates?.[balanceDateField.dataset.balanceDate];
+  if(fd&&fd<balanceDateField.value)state.forecastDates[balanceDateField.dataset.balanceDate]=balanceDateField.value;
+  save()
+ }
  const field=e.target.closest("[data-forecast-date]");
  if(field){
   state.forecastDates=state.forecastDates||{};

@@ -1,4 +1,4 @@
-FAMILIENKONTO – PWA PROTOTYP 0.3
+FAMILIENKONTO – PWA PROTOTYP 0.4
 
 NEU IN VERSION 0.3
 - Neue Konten-Prognose im Stil der bisherigen iPhone-Fensterkarten
@@ -22,3 +22,4 @@ UPDATE AUF GITHUB PAGES
 
 SICHERHEIT
 Keine echten Zugangsdaten, PINs, TANs oder sensiblen Kontodaten in GitHub hochladen. Das Repository ist öffentlich. Es gibt weiterhin keine Sparkassen-Anbindung und keine Synchronisierung zwischen Geräten.
+\nVersion 0.4: Je Konto kann ein aktueller Kontostand mit Stichtag erfasst werden. Die Prognose berücksichtigt nur regelmäßige Einnahmen und Ausgaben nach diesem Stichtag bis zum individuellen Prognosedatum.\n
