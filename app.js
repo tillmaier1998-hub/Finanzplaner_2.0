@@ -32,6 +32,33 @@ const available=()=>total()-outstanding()-Number(state.reserve||0);
 const forecast=()=>available()+expectedIncome();
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function ownerName(owner){return owner==="you"?"Dein Konto":"Konto deiner Frau"}
+function todayISO(){
+ const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function formatDate(iso){
+ const [y,m,d]=iso.split("-").map(Number);return new Intl.DateTimeFormat("de-DE").format(new Date(y,m-1,d));
+}
+function forecastAccount(account){
+ const today=new Date();today.setHours(0,0,0,0);
+ const saved=state.forecastDates?.[account.id];
+ const date=saved&&saved>=todayISO()?saved:todayISO();
+ const [ty,tm,td]=date.split("-").map(Number);
+ const end=new Date(ty,tm-1,td);let income=0,expense=0;
+ const startMonth=new Date(today.getFullYear(),today.getMonth(),1);
+ for(let month=new Date(startMonth);month<=new Date(ty,tm-1,1);month.setMonth(month.getMonth()+1)){
+  const isCurrent=month.getFullYear()===today.getFullYear()&&month.getMonth()===today.getMonth();
+  const monthEnd=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
+  for(const item of state.incomes.filter(x=>x.owner===account.id)){
+   const day=Math.min(Number(item.day)||1,monthEnd),occurrence=new Date(month.getFullYear(),month.getMonth(),day);
+   if(occurrence<=end&&(!isCurrent||!item.received))income+=Number(item.amount||0);
+  }
+  for(const item of state.costs.filter(x=>x.owner===account.id)){
+   const day=Math.min(Number(item.day)||1,monthEnd),occurrence=new Date(month.getFullYear(),month.getMonth(),day);
+   if(occurrence<=end&&(!isCurrent||!item.paid))expense+=Number(item.amount||0);
+  }
+ }
+ return {account,date,income,expense,change:income-expense,balance:Number(account.balance||0)+income-expense};
+}
 function render(){
  document.querySelector("#available").textContent=euro(available());
  document.querySelector("#totalBalance").textContent=euro(total());
@@ -47,10 +74,25 @@ function render(){
  document.querySelector("#costList").innerHTML=sorted.map(c=>`<div class="list-card"><div class="ico">${categoryIcon(c.category)}</div><div class="row-main"><strong>${esc(c.name)}</strong><small>Tag ${c.day} · ${esc(c.category)} · ${ownerName(c.owner)}</small><div class="amount">${euro(c.amount)}</div></div><button class="paid ${c.paid?"done":""}" data-paid="${c.id}">${c.paid?"Bezahlt":"Offen"}</button><button class="delete" data-delete="${c.id}" aria-label="Löschen">×</button></div>`).join("")||'<div class="empty">Noch keine Fixkosten. Füge eure regelmäßigen Abbuchungen hinzu.</div>';
  document.querySelector("#incomeList").innerHTML=state.incomes.map(i=>`<div class="list-card"><div class="ico">＋</div><div class="row-main"><strong>${esc(i.name)}</strong><small>Tag ${i.day} · ${ownerName(i.owner)}</small><div class="amount">${euro(i.amount)}</div></div><button class="paid ${i.received?"done":""}" data-received="${i.id}">${i.received?"Erhalten":"Offen"}</button><button class="delete" data-income-delete="${i.id}" aria-label="Löschen">×</button></div>`).join("")||'<div class="empty">Noch keine Einnahmen eingetragen. Füge zum Beispiel Gehalt oder Kindergeld hinzu.</div>';
  document.querySelector("#accountList").innerHTML=state.accounts.map(a=>`<div class="list-card"><div class="ico">€</div><div class="row-main"><strong>${esc(a.name)}</strong><small>Sparkasse Rhein-Haardt · manuell gepflegt</small><div class="amount">${euro(a.balance)}</div></div><button class="account-edit" data-account="${a.id}">Ändern</button></div>`).join("");
- const projected=state.accounts.map(a=>{const inc=state.incomes.filter(i=>i.owner===a.id&&!i.received).reduce((s,i)=>s+Number(i.amount||0),0);const cost=state.costs.filter(c=>c.owner===a.id&&!c.paid).reduce((s,c)=>s+Number(c.amount||0),0);return {name:a.name,value:Number(a.balance||0)+inc-cost}});
- document.querySelector("#accountForecast").innerHTML=projected.map(a=>`<div class="row"><div class="row-main"><strong>${esc(a.name)}</strong><small>Voraussichtlicher Stand nach offenen Buchungen</small></div><div class="amount ${a.value<0?"negative":""}">${euro(a.value)}</div></div>`).join("");
- const low=projected.filter(a=>a.value<0);
- document.querySelector("#forecastAlert").innerHTML=low.length?`<div class="alert">Achtung: ${low.map(a=>esc(a.name)).join(" und ")} könnte(n) nach den offenen Buchungen ins Minus rutschen.</div>`:'<div class="good">Nach den aktuell eingetragenen Buchungen ist kein Konto rechnerisch im Minus.</div>';
+ const projections=state.accounts.map(a=>forecastAccount(a));
+ const sumIncome=projections.reduce((n,p)=>n+p.income,0);
+ const sumExpense=projections.reduce((n,p)=>n+p.expense,0);
+ const sumChange=sumIncome-sumExpense;
+ document.querySelector("#forecastIncome").textContent=euro(sumIncome);
+ document.querySelector("#forecastExpense").textContent=euro(sumExpense);
+ document.querySelector("#forecastChange").textContent=(sumChange>=0?"+":"")+euro(sumChange);
+ document.querySelector("#accountForecast").innerHTML=projections.map(p=>`
+  <article class="account-forecast ${p.account.id==="partner"?"partner":""}">
+   <div class="account-forecast-head"><div class="account-mark">${p.account.id==="partner"?"◉":"▣"}</div><div class="account-title"><strong>${esc(p.account.name)}</strong><small>Prognose bis ${formatDate(p.date)}</small></div><label class="date-field"><span>Datum</span><input type="date" class="forecast-date" data-forecast-date="${p.account.id}" min="${todayISO()}" value="${p.date}"></label></div>
+   <div class="forecast-lines">
+    <div><span class="line-icon income-icon">↑</span><span>Einnahmen</span><strong>${euro(p.income)}</strong></div>
+    <div><span class="line-icon expense-icon">↓</span><span>Ausgaben</span><strong>${euro(p.expense)}</strong></div>
+    <div><span class="line-icon change-icon">↗</span><span>Veränderung</span><strong class="${p.change<0?"negative":"positive"}">${p.change>=0?"+":""}${euro(p.change)}</strong></div>
+    <div class="balance-line"><span class="line-icon balance-icon">€</span><span>Prognostizierter Kontostand</span><strong class="${p.balance<0?"negative":""}">${euro(p.balance)}</strong></div>
+   </div>
+  </article>`).join("");
+ const low=projections.filter(p=>p.balance<0);
+ document.querySelector("#forecastAlert").innerHTML=low.length?`<div class="alert">Achtung: ${low.map(p=>esc(p.account.name)).join(" und ")} könnte(n) zum gewählten Datum ins Minus rutschen.</div>`:'<div class="good">Zum jeweils gewählten Datum ist kein Konto rechnerisch im Minus.</div>';
 }
 function categoryIcon(cat){return ({Wohnen:"⌂",Mobilität:"↗",Versicherung:"◇",Verträge:"▤",Abos:"▷"})[cat]||"€"}
 function costRow(c){return `<div class="row"><div class="ico">${categoryIcon(c.category)}</div><div class="row-main"><strong>${esc(c.name)}</strong><small>Tag ${c.day} · ${ownerName(c.owner)}</small></div><div class="amount">−${euro(c.amount)}</div></div>`}
@@ -85,6 +127,14 @@ document.querySelector("#accountForm").addEventListener("submit",e=>{
  if(e.submitter?.value==="cancel")return;e.preventDefault();
  const a=state.accounts.find(x=>x.id===e.target.dataset.id);if(a){a.balance=Number(document.querySelector("#accountBalance").value)||0;save()}
  document.querySelector("#accountDialog").close();
+});
+document.addEventListener("change",e=>{
+ const field=e.target.closest("[data-forecast-date]");
+ if(field){
+  state.forecastDates=state.forecastDates||{};
+  state.forecastDates[field.dataset.forecastDate]=field.value||todayISO();
+  save();
+ }
 });
 if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
 render();

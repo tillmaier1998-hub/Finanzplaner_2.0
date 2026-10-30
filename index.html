@@ -13,7 +13,7 @@
 <title>Familienkonto</title>
 </head>
 <body>
-<header><div class="brand"><div class="logo">€</div><div><strong>Familienkonto</strong><small>Euer Geld. Im Blick.</small></div></div><span class="demo">PROTOTYP 0.2</span></header>
+<header><div class="brand"><div class="logo">€</div><div><strong>Familienkonto</strong><small>Euer Geld. Im Blick.</small></div></div><span class="demo">PROTOTYP 0.3</span></header>
 <main>
 <nav class="tabs"><button class="tab active" data-tab="home">Übersicht</button><button class="tab" data-tab="costs">Fixkosten</button><button class="tab" data-tab="incomes">Einnahmen</button><button class="tab" data-tab="accounts">Konten</button></nav>
 <section id="home" class="page active">
@@ -22,7 +22,16 @@
  <article class="panel forecast-panel"><div class="eyebrow dark">PROGNOSE NACH ERWARTETEN EINNAHMEN UND OFFENEN FIXKOSTEN</div><div id="forecast" class="forecast-number">–</div><p class="muted">Voraussichtlicher Betrag bis Monatsende nach den eingetragenen Buchungen und abzüglich eurer Reserve.</p><div class="metrics compact"><article><span>Monatliche Einnahmen</span><strong id="monthlyIncomeHome">–</strong></article><article><span>Noch erwartete Einnahmen</span><strong id="expectedIncome">–</strong></article></div></article>
  <article class="panel"><div class="panel-head"><h2>Nächste Abbuchungen</h2><button class="text-button" data-go="costs">Alle anzeigen</button></div><div id="upcoming"></div></article>
  <article class="panel reserve"><label for="reserve">Sicherheitsreserve</label><div class="inline"><input id="reserve" type="number" min="0" step="10"><span>€</span></div><p>Dieser Betrag bleibt unangetastet und wird vom verfügbaren Geld abgezogen.</p></article>
- <article class="panel"><h2>Konten-Prognose</h2><div id="accountForecast"></div><div id="forecastAlert"></div></article>
+ <section class="forecast-section">
+  <div class="forecast-heading"><div><h2>Konten-Prognose</h2><p>Individuelle Vorschau für jedes Konto</p></div><span class="forecast-badge">LIVE-BERECHNUNG</span></div>
+  <div class="forecast-summary">
+   <article class="summary-tile income-tile"><span class="tile-symbol">↑</span><small>Gesamte Einnahmen</small><strong id="forecastIncome">–</strong><em>bis zu euren Prognosedaten</em></article>
+   <article class="summary-tile expense-tile"><span class="tile-symbol">↓</span><small>Gesamte Ausgaben</small><strong id="forecastExpense">–</strong><em>bis zu euren Prognosedaten</em></article>
+   <article class="summary-tile change-tile"><span class="tile-symbol">▣</span><small>Gesamtveränderung</small><strong id="forecastChange">–</strong><em>Einnahmen minus Ausgaben</em></article>
+  </div>
+  <div class="account-forecast-list" id="accountForecast"></div>
+  <div id="forecastAlert"></div>
+ </section>
  <p class="notice">Prototyp: Kontostände, Einnahmen und Fixkosten werden manuell gepflegt. Markiere Zahlungen bzw. Einnahmen nach Ausführung als bezahlt/erhalten. Die Prognose ist nur so genau wie deine Eingaben.</p>
 </section>
 <section id="costs" class="page"><div class="section-title"><div><h1>Fixkosten</h1><p>Regelmäßige monatliche Ausgaben</p></div><button class="primary" id="addCost">＋ Hinzufügen</button></div><div class="summary-line"><span>Monatliche Fixkosten gesamt</span><strong id="monthlyCosts">–</strong></div><div id="costList" class="list"></div></section>

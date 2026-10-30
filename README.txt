@@ -1,25 +1,24 @@
-FAMILIENKONTO – PWA PROTOTYP 0.2
+FAMILIENKONTO – PWA PROTOTYP 0.3
 
-NEU IN VERSION 0.2
-- Einnahmen erfassen (z. B. Gehalt, Elterngeld, Kindergeld)
-- Zahlungstag und zugeordnetes Konto festlegen
-- Einnahmen als erhalten/offen markieren
-- Prognose aus aktuellem Kontostand, offenen Fixkosten, erwarteten Einnahmen und Sicherheitsreserve
-- Warnhinweis, wenn ein Konto nach den eingetragenen offenen Buchungen rechnerisch ins Minus rutschen könnte
-- Bestehende lokal gespeicherte Konten und Fixkosten bleiben beim Update erhalten
+NEU IN VERSION 0.3
+- Neue Konten-Prognose im Stil der bisherigen iPhone-Fensterkarten
+- Drei kompakte Übersichtsfenster: gesamte Einnahmen, gesamte Ausgaben und Gesamtveränderung
+- Für jedes Konto ein eigenes, jederzeit änderbares Prognosedatum
+- Eigene Kontokarte je Konto mit Einnahmen, Ausgaben, Veränderung und prognostiziertem Kontostand
+- Prognose berücksichtigt monatlich wiederkehrende Einträge bis zum jeweils gewählten Datum
+- Bereits als erhalten/bezahlt markierte Einträge des laufenden Monats werden nicht erneut eingerechnet
+- Bestehende Daten aus Version 0.2 bleiben erhalten (gleicher lokaler Datenspeicher)
 
-WICHTIG
-Dies ist weiterhin ein lokaler Prototyp. Es gibt keine Sparkassen-Anbindung und keine Synchronisierung zwischen Geräten. Daten werden im Browser des jeweiligen Geräts gespeichert. Die Prognose ist nur so zuverlässig wie die manuell gepflegten Daten.
+WICHTIG ZUR PROGNOSE
+Die App arbeitet weiterhin mit manuell gepflegten monatlichen Einnahmen und Fixkosten. Für die Prognose werden die eingetragenen Zahlungstage monatlich wiederholt. Bei zukünftigen Monaten werden diese regelmäßigen Buchungen erneut berücksichtigt. Die Markierungen „Bezahlt“ und „Erhalten“ gelten nur für den laufenden Monat. Die Prognose ist eine Planungsrechnung und keine Bankauskunft.
 
 UPDATE AUF GITHUB PAGES
-1. Entpacke diese ZIP-Datei auf dem PC.
-2. Öffne dein GitHub-Repository und wähle Add file > Upload files.
-3. Wähle die Dateien aus diesem Ordner aus. Wenn GitHub meldet, dass Dateien mit denselben Namen bereits existieren, bestätige das Ersetzen bzw. lade die Dateien über die jeweiligen Edit-Funktionen hoch.
+1. ZIP auf dem PC entpacken.
+2. Im GitHub-Repository Add file > Upload files wählen.
+3. Alle acht Dateien aus dem entpackten Ordner hochladen und vorhandene Dateien ersetzen.
 4. Commit changes.
-5. Öffne die GitHub-Pages-Adresse erneut. Falls noch die alte Version angezeigt wird, lade die Seite neu oder schließe die installierte App vollständig und öffne sie erneut.
-
-INSTALLATION AUF DEM IPHONE
-In Safari die veröffentlichte HTTPS-Adresse öffnen > Teilen > Zum Home-Bildschirm.
+5. Warten, bis GitHub Pages erfolgreich veröffentlicht hat.
+6. App auf dem iPhone vollständig schließen und erneut öffnen. Falls die alte Version erscheint, in Safari die Seite neu laden.
 
 SICHERHEIT
-Keine echten Zugangsdaten, PINs, TANs oder sensiblen Kontodaten in GitHub hochladen. Das Repository ist öffentlich und der Quellcode ist für andere sichtbar.
+Keine echten Zugangsdaten, PINs, TANs oder sensiblen Kontodaten in GitHub hochladen. Das Repository ist öffentlich. Es gibt weiterhin keine Sparkassen-Anbindung und keine Synchronisierung zwischen Geräten.
